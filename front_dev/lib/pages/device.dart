@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:front_dev/functions/controller/devicesController.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class Device extends StatefulWidget {
   final int deviceId;
@@ -28,6 +29,15 @@ class _DeviceState extends State<Device> {
       state,
       description,
     );
+  }
+
+  List<FlSpot> generateChartData(List history) {
+    return history.asMap().entries.map((entry) {
+      int index = entry.key;
+      var item = entry.value;
+      double state = item['state'] ? 1.0 : 0.0;
+      return FlSpot(index.toDouble(), state);
+    }).toList();
   }
 
   @override
@@ -142,6 +152,31 @@ class _DeviceState extends State<Device> {
                   const SizedBox(height: 8),
                   Text('ID: ${device['id']}'),
                   Text('Name: ${device['name']}'),
+                  const Divider(height: 24),
+
+                  Text('Historial de Encendido/Apagado:'),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    height: 200,
+                    child: LineChart(
+                      LineChartData(
+                        lineBarsData: [
+                          LineChartBarData(
+                            spots: generateChartData(history),
+                            isCurved: true,
+                            barWidth: 2,
+                            belowBarData: BarAreaData(show: false),
+                          ),
+                        ],
+                        titlesData: FlTitlesData(
+                          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        ),
+                        borderData: FlBorderData(show: false),
+                        gridData: FlGridData(show: false),
+                      ),
+                    ),
+                  ),
                   const Divider(height: 24),
 
                   Text('History:'),
