@@ -163,8 +163,9 @@ class _DeviceState extends State<Device> {
                         lineBarsData: [
                           LineChartBarData(
                             spots: generateChartData(history),
-                            isCurved: true,
+                            isStepLineChart: true,
                             barWidth: 2,
+                            color: Colors.blueAccent,
                             belowBarData: BarAreaData(show: false),
                           ),
                         ],
