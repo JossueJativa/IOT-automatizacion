@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "782228114211",
+    "project_id": "controlleriot-2d182",
+    "storage_bucket": "controlleriot-2d182.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:782228114211:android:73d5e65dc0f431284f9a96",
+        "android_client_info": {
+          "package_name": "com.example.front_dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDucxC_u9noHlwG_nj4y_RLtGB_M7iAaz0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
