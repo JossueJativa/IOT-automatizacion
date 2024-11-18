@@ -230,3 +230,22 @@ Future<Map<String, dynamic>> getEnergy(int id) async {
     return {'error': 'Error al obtener el dispositivo'};
   }
 }
+
+Future<Map<String, dynamic>> getPower(int id) async {
+  final Map<String, dynamic> data = await loadAuthData();
+
+  if (data['API_URL'] == null || data.isEmpty) {
+    return {'error': 'No se pudo obtener la URL de la API'};
+  }
+
+  final String url = '${data['API_URL']}devices/generate_power/?device_id=$id';
+
+  final response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    final Map<String, dynamic> body = jsonDecode(response.body);
+    return body;
+  } else {
+    return {'error': 'Error al obtener el dispositivo'};
+  }
+}
