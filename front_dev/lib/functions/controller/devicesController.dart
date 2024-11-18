@@ -211,3 +211,22 @@ Future<Map<String, dynamic>>updateHistory(int deviceId, bool state, String descr
     return {'error': 'Error al actualizar el historial'};
   }
 }
+
+Future<Map<String, dynamic>> getEnergy(int id) async {
+  final Map<String, dynamic> data = await loadAuthData();
+
+  if (data['API_URL'] == null || data.isEmpty) {
+    return {'error': 'No se pudo obtener la URL de la API'};
+  }
+
+  final String url = '${data['API_URL']}devices/generate_energy/?device_id=$id';
+
+  final response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    final Map<String, dynamic> body = jsonDecode(response.body);
+    return body;
+  } else {
+    return {'error': 'Error al obtener el dispositivo'};
+  }
+}

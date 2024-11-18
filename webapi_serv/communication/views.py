@@ -10,6 +10,7 @@ from django.contrib.auth import authenticate
 
 from .models import *
 from .serializer import *
+import random
 
 # Create your views here.
 class HomeAssistantViewSet(viewsets.ModelViewSet):
@@ -45,7 +46,42 @@ class DevicesViewSet(viewsets.ModelViewSet):
         return Response({
             'device': DevicesSerializer(device).data,
             'history': data
-        }, status=200)     
+        }, status=200)
+    
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'device_id',
+                openapi.IN_QUERY,
+                description="ID del dispositivo para generar consumo de energía",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            )
+        ],
+        responses={
+            200: openapi.Response('Energía generada con éxito'),
+            400: openapi.Response('Solicitud incorrecta'),
+            404: openapi.Response('Dispositivo no encontrado'),
+        }
+    )
+    @action(detail=False, methods=['get'])
+    def generate_energy(self, request, *args, **kwargs):
+        try:
+            device_id = int(request.query_params.get('device_id', 0))
+        except ValueError:
+            return Response({'error': 'El ID del dispositivo debe ser un número entero'}, status=400)
+
+        if not device_id:
+            return Response({'error': 'Proporcione un ID de dispositivo'}, status=400)
+
+        device = Devices.objects.filter(id=device_id).first()
+
+        if not device:
+            return Response({'error': 'Dispositivo no encontrado'}, status=404)
+
+        energy_hour = {i: random.randint(0, 100) for i in range(24)}
+
+        return Response({'message': 'Energía generada con éxito', 'energy_hour': energy_hour}, status=200)
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()

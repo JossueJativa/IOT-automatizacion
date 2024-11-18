@@ -40,6 +40,14 @@ class _DeviceState extends State<Device> {
     }).toList();
   }
 
+  List<FlSpot> generateEnergyChartData(Map<String, dynamic> energyData) {
+    return energyData.entries.map((entry) {
+      int hour = int.parse(entry.key);
+      double energy = entry.value.toDouble();
+      return FlSpot(hour.toDouble(), energy);
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -177,6 +185,48 @@ class _DeviceState extends State<Device> {
                         gridData: FlGridData(show: false),
                       ),
                     ),
+                  ),
+                  const Divider(height: 24),
+
+                  Text('Consumo de energía:'),
+                  const SizedBox(height: 8),
+                  FutureBuilder<Map<String, dynamic>>(
+                    future: getEnergy(widget.deviceId),
+                    builder: (context, energySnapshot) {
+                      if (energySnapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (energySnapshot.hasError) {
+                        return Center(
+                          child: Text('Error: ${energySnapshot.error}'),
+                        );
+                      } else if (energySnapshot.hasData) {
+                        final energyData = energySnapshot.data!['energy_hour'] as Map<String, dynamic>;
+                        return SizedBox(
+                          height: 200,
+                          child: LineChart(
+                            LineChartData(
+                              lineBarsData: [
+                                LineChartBarData(
+                                  spots: generateEnergyChartData(energyData),
+                                  isStepLineChart: false,
+                                  barWidth: 2,
+                                  color: Colors.green,
+                                  belowBarData: BarAreaData(show: false),
+                                ),
+                              ],
+                              titlesData: FlTitlesData(
+                                leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                              ),
+                              borderData: FlBorderData(show: false),
+                              gridData: FlGridData(show: false),
+                            ),
+                          ),
+                        );
+                      } else {
+                        return const Center(child: Text('No energy data found.'));
+                      }
+                    },
                   ),
                   const Divider(height: 24),
 
