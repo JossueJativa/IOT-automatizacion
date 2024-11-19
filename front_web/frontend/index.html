@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Hello World!</title>
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+  <link rel="stylesheet" href="assets/css/stylelogin.css">
+</head>
+
+<body>
+  <div class="wrapper">
+
+    <div class="title-text">
+      <div class="title login">Iniciar Sección</div>
+      <div class="title signup">Registrarse</div>
+    </div>
+
+    <div class="form-container">
+
+      <div class="slide-controls">
+        <input type="radio" name="slide" id="login" checked>
+        <input type="radio" name="slide" id="signup">
+        <label for="login" class="slide login">Iniciar Sección</label>
+        <label for="signup" class="slide signup">Registrarse</label>
+        <div class="slider-tab"></div>
+      </div>
+
+      <div class="form-inner">
+        <form action="#" class="login" id="user-form-login">
+          <div class="field">
+            <input type="text" id="login-username" placeholder="Usuario" required>
+          </div>
+          <div class="field">
+            <input type="password" id="login-password" placeholder="Contraseña" required>
+          </div>
+          <div class="pass-link"><a href="#">¿Olvidaste tu contraseña?</a></div>
+          <div class="field btn">
+            <div class="btn-layer"></div>
+            <input type="submit" value="Iniciar Sección">
+          </div>
+          <div class="signup-link">¿No estas registrado? <a href="#">Regístrate ahora</a></div>
+        </form>
+
+        <form action="#" class="signup" id="user-form-register">
+          <div class="field">
+            <input type="text" id="signup-username" placeholder="Usuario" required>
+          </div>
+
+          <div class="field">
+            <input type="text" id="signup-email" placeholder="Correo" required>
+          </div>
+
+          <div class="field">
+            <input type="password" id="signup-password" placeholder="Contraseña" required>
+          </div>
+
+          <div class="field">
+            <input type="password" id="signup-confirm-password" placeholder="Confirmar contraseña" required>
+          </div>
+
+          <div class="field btn">
+            <div class="btn-layer"></div>
+            <input type="submit" value="Registrarse">
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="./assets/js/login.js"></script>
+  <script src="./assets/js/backend/api.js"></script>
+</body>
+
+</html>
