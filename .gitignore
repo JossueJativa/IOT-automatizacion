@@ -3,3 +3,5 @@
 /front_dev/assets/auth.json
 /.vscode/
 /env/
+/front_web/node_modules/
+/front_web/frontend/assets/json/auth.json
