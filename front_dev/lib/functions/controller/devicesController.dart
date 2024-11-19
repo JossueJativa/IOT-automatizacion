@@ -249,3 +249,39 @@ Future<Map<String, dynamic>> getPower(int id) async {
     return {'error': 'Error al obtener el dispositivo'};
   }
 }
+
+Future<Map<String, dynamic>> calculateEnergyCost(int id) async {
+  final Map<String, dynamic> data = await loadAuthData();
+
+  if (data['API_URL'] == null || data.isEmpty) {
+    return {'error': 'No se pudo obtener la URL de la API'};
+  }
+
+  final String url = '${data['API_URL']}devices/generate_energy/?device_id=$id';
+
+  final response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    final Map<String, dynamic> body = jsonDecode(response.body);
+
+    if (body['error'] != null) {
+      return {'error': 'Error al obtener el consumo de energía'};
+    }
+
+    final Map<String, dynamic> energyHour = body['energy_hour'];
+    const double pricePerUnit = 0.15; // Precio estático por unidad de energía
+    double totalCost = 0;
+
+    energyHour.forEach((hour, energy) {
+      totalCost += energy * pricePerUnit;
+    });
+
+    return {
+      'message': 'Costo de energía calculado con éxito',
+      'total_cost': totalCost,
+      'energy_hour': energyHour
+    };
+  } else {
+    return {'error': 'Error al obtener el dispositivo'};
+  }
+}
