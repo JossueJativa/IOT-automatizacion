@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton, Alert } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { registerAPI } from '../controller/auth';
 import '../assets/css/login.css'
 
 export const Register = () => {
@@ -47,6 +48,21 @@ export const Register = () => {
             setError('Por favor complete todos los campos');
             return;
         }
+
+        if (password !== confirmPassword) {
+            setError('Las contraseñas no coinciden');
+            return;
+        }
+
+        const response = await registerAPI(
+            username, email, password, confirmPassword
+        );
+
+        if (response.error) {
+            setError(response.error);
+            return;
+        }
+        window.location.href = '/';
     }
 
     return (
@@ -75,7 +91,7 @@ export const Register = () => {
                                 id="outlined-adornment-email"
                                 type="text"
                                 value={email}
-                                onChange={handleUsernameChange}
+                                onChange={handleEmailChange}
                                 label="Email"
                             />
                         </FormControl>

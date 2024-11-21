@@ -1,16 +1,20 @@
 import axios from "axios";
 import { userAPI } from "./api";
 
-export const login = async (username, password) => {
+export const loginAPI = async (username, password) => {
     try {
-        const response = await axios.post(`${userAPI}login`, { username, password });
+        const response = await axios.post(
+            `${userAPI}login/`, 
+            { username, password },
+            { headers: { 'Content-Type': 'application/json' } }
+        );
         return response.data;
     } catch (error) {
         return error.response.data;
     }
 }
 
-export const register = async (username, email, password, confirm) => {
+export const registerAPI = async (username, email, password, confirm) => {
     if (!username || !email || !password || !confirm) {
         return { error: 'Por favor complete todos los campos' };
     }
@@ -20,7 +24,11 @@ export const register = async (username, email, password, confirm) => {
     }
 
     try {
-        const response = await axios.post(`${userAPI}`, { username, email, password, confirm, tokenPhone: '' });
+        const response = await axios.post(
+            `${userAPI}`,
+            { username, email, password, confirm, tokenPhone: '123' },
+            { headers: { 'Content-Type': 'application/json' } }
+        );
         return response.data;
     } catch (error) {
         return error.response.data;

@@ -5,6 +5,7 @@ import { Register } from './pages/register'
 
 // Import filesystem namespace
 import { filesystem } from "@neutralinojs/lib"
+import { Home } from './pages/home'
 
 function App() {
   useEffect(() => {
@@ -20,6 +21,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path='/home' element={<Home />} />
       </Routes>
     </div>
   );

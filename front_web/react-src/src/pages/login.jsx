@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton, Alert } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import '../assets/css/login.css'
+import { loginAPI } from '../controller/auth';
+import { jwtDecode } from 'jwt-decode'; // Add this import
 
 export const Login = () => {
     const [username, setUsername] = useState('');
@@ -32,6 +34,21 @@ export const Login = () => {
             setError('Por favor complete todos los campos');
             return;
         }
+
+        const response = await loginAPI(username, password);
+
+        if (response.error) {
+            setError(response.error);
+            return;
+        }
+
+        localStorage.setItem('refresh', response.refresh);
+        localStorage.setItem('access', response.access);
+
+        const decodedToken = jwtDecode(response.access);
+        localStorage.setItem('userId', decodedToken.user_id);
+
+        window.location.href = '/home';
     }
 
     return (
