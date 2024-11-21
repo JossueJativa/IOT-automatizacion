@@ -21,6 +21,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { getDevicesUser } from "../controller/devices";
 import { createHomeAssistant, getHomeAssistant } from "../controller/homeassistantAPI";
 import { logoutAPI } from "../controller/auth";
+import { useNavigate } from "react-router-dom";
 
 const fetchDevices = async () => {
   const userId = localStorage.getItem('userId');
@@ -79,6 +80,7 @@ export const Home = () => {
   const [newDeviceName, setNewDeviceName] = useState("");
   const [showAddHaDialog, setShowAddHaDialog] = useState(false);
   const [showAddDeviceDialog, setShowAddDeviceDialog] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadDevices = async () => {
@@ -168,7 +170,7 @@ export const Home = () => {
           <List>
             {devices.map((device) => (
               <ListItem key={device.id}>
-                <ListItemButton>
+                <ListItemButton onClick={() => navigate(`/device/${device.id}`)}>
                   <ListItemText
                     primary={device.name}
                     secondary={`ID: ${device.id}`}

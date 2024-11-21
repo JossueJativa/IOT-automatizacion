@@ -6,6 +6,7 @@ import { Register } from './pages/register'
 // Import filesystem namespace
 import { filesystem } from "@neutralinojs/lib"
 import { Home } from './pages/home'
+import { Device } from './pages/device'
 
 function App() {
   useEffect(() => {
@@ -22,6 +23,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path='/home' element={<Home />} />
+        <Route path='/device/:deviceId' element={<Device />} />
       </Routes>
     </div>
   );

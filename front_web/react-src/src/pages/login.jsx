@@ -3,13 +3,15 @@ import { FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton, Ale
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import '../assets/css/login.css'
 import { loginAPI } from '../controller/auth';
-import { jwtDecode } from 'jwt-decode'; // Add this import
+import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
 
 export const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const handleUsernameChange = (e) => {
         setUsername(e.target.value);
@@ -48,7 +50,7 @@ export const Login = () => {
         const decodedToken = jwtDecode(response.access);
         localStorage.setItem('userId', decodedToken.user_id);
 
-        window.location.href = '/home';
+        navigate('/home');
     }
 
     return (
