@@ -20,6 +20,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { getDevicesUser } from "../controller/devices";
 import { createHomeAssistant, getHomeAssistant } from "../controller/homeassistantAPI";
+import { logoutAPI } from "../controller/auth";
 
 const fetchDevices = async () => {
   const userId = localStorage.getItem('userId');
@@ -51,6 +52,7 @@ const syncHomeAssistant = async (devices) => {
     if (homeAssistantData.error) {
       alert("Home Assistant not synchronized with your devices");
     } else {
+      localStorage.setItem('homeAssistantId', homeAssistantData);
       alert("Home Assistant synchronized with your devices");
     }
   } catch (error) {
@@ -64,9 +66,7 @@ const addDevice = async (name) => {
 };
 
 const logout = () => {
-  localStorage.removeItem('userId');
-  localStorage.removeItem('access');
-  localStorage.removeItem('refresh');
+  logoutAPI();
   window.location.href = '/';
 };
 

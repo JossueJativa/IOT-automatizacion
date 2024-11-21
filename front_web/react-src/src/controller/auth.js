@@ -4,7 +4,7 @@ import { userAPI } from "./api";
 export const loginAPI = async (username, password) => {
     try {
         const response = await axios.post(
-            `${userAPI}login/`, 
+            `${userAPI}login/`,
             { username, password },
             { headers: { 'Content-Type': 'application/json' } }
         );
@@ -33,4 +33,11 @@ export const registerAPI = async (username, email, password, confirm) => {
     } catch (error) {
         return error.response.data;
     }
+}
+
+export const logoutAPI = () => {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('access');
+    localStorage.removeItem('refresh');
+    localStorage.removeItem('homeAssistantId');
 }
