@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<List<Map<String, dynamic>>> fetchDevices() async {
-    return await getDevices();
+    return await getDevicesHA(1);
   }
 
   Future<void> _addDevice() async {
@@ -183,16 +183,11 @@ class _HomePageState extends State<HomePage> {
                     );
                   }
 
-                  final device = snapshot.data![index];
-                  final deviceId = device['device']['id'];
-                  final idHA = _prefs?.getInt('idHA') ?? 0;
+                  final device = (snapshot.data![index]);
+                  final nameDevice = device['attributes']?['friendly_name'] ?? 'Desconocido';
+                  final entityId = device['entity_id'] ?? 'Sin ID';
+                  final state = device['state'] ?? 'Desconocido';
 
-                  if (idHA == 0) {
-                    if (device['device']['homeassistant'] != null) {
-                      _prefs?.setInt('idHA', device['device']['homeassistant']);
-                      _prefs?.setBool('HA_added', true);
-                    }
-                  }
 
                   return Padding(
                     padding: const EdgeInsets.symmetric(
@@ -202,7 +197,10 @@ class _HomePageState extends State<HomePage> {
                         Navigator.pushNamed(
                           context,
                           'device/',
-                          arguments: deviceId,
+                          arguments: {
+                            'deviceId': index + 1,
+                            'entityId': entityId,
+                          },
                         );
                       },
                       style: ElevatedButton.styleFrom(
@@ -216,7 +214,7 @@ class _HomePageState extends State<HomePage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            device['device']['name'] ?? 'Desconocido',
+                            nameDevice ?? 'Desconocido',
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -224,7 +222,14 @@ class _HomePageState extends State<HomePage> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'ID: $deviceId',
+                            'ID: $entityId',
+                            style: const TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Estado: $state',
                             style: const TextStyle(
                               fontSize: 14,
                             ),

@@ -6,7 +6,13 @@ import 'package:fl_chart/fl_chart.dart';
 
 class Device extends StatefulWidget {
   final int deviceId;
-  const Device({super.key, required this.deviceId});
+  final String entityId;
+  
+  const Device({
+    Key? key,
+    required this.deviceId,
+    required this.entityId,
+  }): super(key: key);
 
   @override
   _DeviceState createState() => _DeviceState();
@@ -21,7 +27,8 @@ class _DeviceState extends State<Device> {
       isDeviceOn = !isDeviceOn;
     });
 
-    final String description = isDeviceOn ? 'The device is turned on' : 'The device is turned off';
+    final String description =
+        isDeviceOn ? 'The device is turned on' : 'The device is turned off';
     final bool state = isDeviceOn;
 
     updateHistory(
@@ -29,6 +36,14 @@ class _DeviceState extends State<Device> {
       state,
       description,
     );
+  }
+
+  void turnLightOff(String entityId) async {
+    await change_status('turn_off', entityId);
+  }
+
+  void turnLightOn(String entityId) async {
+    await change_status('turn_on', entityId);
   }
 
   List<FlSpot> generateChartData(List history) {
@@ -85,9 +100,7 @@ class _DeviceState extends State<Device> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Device Control'
-                          ),
+                          Text('Device Control'),
                           const SizedBox(height: 8),
                           Row(
                             children: [
@@ -100,7 +113,8 @@ class _DeviceState extends State<Device> {
                                           }
                                         });
 
-                                        final String description = 'The temperature was set to $temperature°C';
+                                        final String description =
+                                            'The temperature was set to $temperature°C';
                                         final bool state = isDeviceOn;
 
                                         updateHistory(
@@ -125,7 +139,8 @@ class _DeviceState extends State<Device> {
                                           }
                                         });
 
-                                        final String description = 'The temperature was set to $temperature°C';
+                                        final String description =
+                                            'The temperature was set to $temperature°C';
                                         final bool state = isDeviceOn;
 
                                         updateHistory(
@@ -142,7 +157,14 @@ class _DeviceState extends State<Device> {
                         ],
                       ),
                       ElevatedButton(
-                        onPressed: toggleDeviceState,
+                        onPressed: () {
+                          if (isDeviceOn) {
+                            turnLightOff(widget.entityId);
+                          } else {
+                            turnLightOn(widget.entityId);
+                          }
+                          toggleDeviceState();
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
                               isDeviceOn ? Colors.red : Colors.green,
@@ -153,7 +175,6 @@ class _DeviceState extends State<Device> {
                       ),
                     ],
                   ),
-
                   const Divider(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -170,7 +191,8 @@ class _DeviceState extends State<Device> {
                       FutureBuilder<Map<String, dynamic>>(
                         future: calculateEnergyCost(widget.deviceId),
                         builder: (context, energyCostSnapshot) {
-                          if (energyCostSnapshot.connectionState == ConnectionState.waiting) {
+                          if (energyCostSnapshot.connectionState ==
+                              ConnectionState.waiting) {
                             return const CircularProgressIndicator();
                           } else if (energyCostSnapshot.hasError) {
                             return Text('Error: ${energyCostSnapshot.error}');
@@ -196,7 +218,6 @@ class _DeviceState extends State<Device> {
                     ],
                   ),
                   const Divider(height: 24),
-
                   Text('Historial de Encendido/Apagado:'),
                   const SizedBox(height: 8),
                   SizedBox(
@@ -213,8 +234,10 @@ class _DeviceState extends State<Device> {
                           ),
                         ],
                         titlesData: FlTitlesData(
-                          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                          bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          leftTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
+                          bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
                         ),
                         borderData: FlBorderData(show: false),
                         gridData: FlGridData(show: false),
@@ -222,13 +245,13 @@ class _DeviceState extends State<Device> {
                     ),
                   ),
                   const Divider(height: 24),
-
                   Text('Consumo de energía:'),
                   const SizedBox(height: 8),
                   FutureBuilder<Map<String, dynamic>>(
                     future: calculateEnergyCost(widget.deviceId),
                     builder: (context, energyCostSnapshot) {
-                      if (energyCostSnapshot.connectionState == ConnectionState.waiting) {
+                      if (energyCostSnapshot.connectionState ==
+                          ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
                       } else if (energyCostSnapshot.hasError) {
                         return Center(
@@ -236,13 +259,15 @@ class _DeviceState extends State<Device> {
                         );
                       } else if (energyCostSnapshot.hasData) {
                         final energyCostData = energyCostSnapshot.data!;
-                        final energyData = energyCostData['energy_hour'] as Map<String, dynamic>;
+                        final energyData = energyCostData['energy_hour']
+                            as Map<String, dynamic>;
                         final totalCost = energyCostData['total_cost'];
 
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Costo total: \$${totalCost.toStringAsFixed(2)}'),
+                            Text(
+                                'Costo total: \$${totalCost.toStringAsFixed(2)}'),
                             const SizedBox(height: 8),
                             SizedBox(
                               height: 200,
@@ -250,7 +275,8 @@ class _DeviceState extends State<Device> {
                                 LineChartData(
                                   lineBarsData: [
                                     LineChartBarData(
-                                      spots: generateEnergyChartData(energyData),
+                                      spots:
+                                          generateEnergyChartData(energyData),
                                       isStepLineChart: false,
                                       barWidth: 2,
                                       color: Colors.green,
@@ -258,8 +284,12 @@ class _DeviceState extends State<Device> {
                                     ),
                                   ],
                                   titlesData: FlTitlesData(
-                                    leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                                    bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                    leftTitles: AxisTitles(
+                                        sideTitles:
+                                            SideTitles(showTitles: false)),
+                                    bottomTitles: AxisTitles(
+                                        sideTitles:
+                                            SideTitles(showTitles: false)),
                                   ),
                                   borderData: FlBorderData(show: false),
                                   gridData: FlGridData(show: false),
@@ -269,12 +299,12 @@ class _DeviceState extends State<Device> {
                           ],
                         );
                       } else {
-                        return const Center(child: Text('No energy data found.'));
+                        return const Center(
+                            child: Text('No energy data found.'));
                       }
                     },
                   ),
                   const Divider(height: 24),
-
                   Text('History:'),
                   const SizedBox(height: 8),
                   Expanded(
@@ -288,8 +318,7 @@ class _DeviceState extends State<Device> {
 
                         return Card(
                           child: ListTile(
-                            title:
-                                Text(description),
+                            title: Text(description),
                             subtitle: Text(
                               'Date: ${item['date']}\nState: ${item['state']}',
                             ),

@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:front_dev/pages/Device.dart';
+import 'package:front_dev/pages/device.dart';
 import 'package:front_dev/pages/homePage.dart';
 import 'package:front_dev/pages/loginPage.dart';
 import 'package:front_dev/pages/registerPage.dart';
@@ -35,9 +35,13 @@ class MainApp extends StatelessWidget {
         '/': (context) => const LoginPage(),
         'register/': (context) => const RegisterPage(),
         'home/': (context) => const HomePage(),
-        'device/': (context) => Device(
-              deviceId: ModalRoute.of(context)!.settings.arguments as int,
-            ),
+        'device/': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          return Device(
+            deviceId: args['deviceId'],
+            entityId: args['entityId'],
+          );
+        },
       },
     );
   }

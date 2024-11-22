@@ -285,3 +285,86 @@ Future<Map<String, dynamic>> calculateEnergyCost(int id) async {
     return {'error': 'Error al obtener el dispositivo'};
   }
 }
+
+Future<List<Map<String, dynamic>>> getDevicesHA(int homeassistant_id) async {
+  final Map<String, dynamic> data = await loadAuthData();
+
+  if (data['API_URL'] == null || data.isEmpty) {
+    return [{'error': 'No se pudo obtener la URL de la API'}];
+  }
+
+  final String url = '${data['API_URL']}devices/get_devices/?homeassistant_id=$homeassistant_id';
+
+  try {
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      // Decodifica la respuesta
+      final dynamic decodedResponse = jsonDecode(response.body);
+
+      // Verifica si es un mapa con una lista de dispositivos
+      if (decodedResponse is Map<String, dynamic> &&
+          decodedResponse.containsKey('devices')) {
+        final List<dynamic> devices = decodedResponse['devices'];
+
+        // Filtra los dispositivos tipo "switch" y "light"
+        final switchDevices = devices
+            .where((device) => device['entity_id'].startsWith('switch.'))
+            .toList();
+        final lightDevices = devices
+            .where((device) => device['entity_id'].startsWith('light.'))
+            .toList();
+
+        return [...switchDevices, ...lightDevices];
+      } else if (decodedResponse is List) {
+        // Si ya es una lista directamente
+        final switchDevices = decodedResponse
+            .where((device) => device['entity_id'].startsWith('switch.'))
+            .toList();
+        final lightDevices = decodedResponse
+            .where((device) => device['entity_id'].startsWith('light.'))
+            .toList();
+
+        return [...switchDevices, ...lightDevices];
+      } else {
+        return [{'error': 'Formato de respuesta inesperado'}];
+      }
+    } else {
+      return [{'error': 'Error al obtener los dispositivos'}];
+    }
+  } catch (e) {
+    return [{'error': 'Error al procesar la solicitud: $e'}];
+  }
+}
+
+Future<bool> change_status(String message, String entityId) async {
+  final Map<String, dynamic> data = await loadAuthData();
+
+  if (data['API_URL'] == null || data.isEmpty) {
+    return false;
+  }
+
+  final String url = '${data['API_URL']}devices/call_service/';
+
+  final response = await http.post(
+    Uri.parse(url),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({
+      'type': 'call_service',
+      'domain': 'switch',
+      'service': message,
+      'service_data': {
+        'entity_id': entityId,
+      },
+      'homeassistant_id': 1,
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    return true;
+  } else {
+    return false;
+  }
+}
